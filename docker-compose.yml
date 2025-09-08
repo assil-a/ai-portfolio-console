@@ -1,0 +1,66 @@
+version: '3.8'
+
+services:
+  db:
+    image: postgres:15-alpine
+    environment:
+      POSTGRES_DB: ai_portfolio
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./database/init.sql:/docker-entrypoint-initdb.d/init.sql
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  api:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    ports:
+      - "40256:8080"
+    environment:
+      - PORT=8080
+      - DATABASE_URL=postgresql://postgres:postgres@db:5432/ai_portfolio
+      - GITHUB_APP_ID=${GITHUB_APP_ID}
+      - GITHUB_APP_PRIVATE_KEY=${GITHUB_APP_PRIVATE_KEY}
+      - GITHUB_WEBHOOK_SECRET=${GITHUB_WEBHOOK_SECRET}
+      - OAUTH_GITHUB_CLIENT_ID=${OAUTH_GITHUB_CLIENT_ID}
+      - OAUTH_GITHUB_CLIENT_SECRET=${OAUTH_GITHUB_CLIENT_SECRET}
+      - CONTRIBUTOR_WINDOW_DAYS=90
+      - ALLOWED_ORGS=${ALLOWED_ORGS}
+      - ADMIN_BASIC_AUTH_USER=${ADMIN_BASIC_AUTH_USER}
+      - ADMIN_BASIC_AUTH_PASS=${ADMIN_BASIC_AUTH_PASS}
+    depends_on:
+      db:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/healthz"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+    volumes:
+      - ./backend:/app
+    command: ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8080", "--reload"]
+
+  web:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    ports:
+      - "45522:5173"
+    environment:
+      - VITE_API_BASE_URL=http://localhost:40256
+      - VITE_GITHUB_APP_INSTALL_URL=${VITE_GITHUB_APP_INSTALL_URL}
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
+    command: ["npm", "run", "dev", "--", "--host", "0.0.0.0", "--port", "5173"]
+
+volumes:
+  postgres_data:
