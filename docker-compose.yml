@@ -1,4 +1,4 @@
-version: '3.8'
+
 
 services:
   db:
@@ -23,19 +23,19 @@ services:
       context: ./backend
       dockerfile: Dockerfile
     ports:
-      - "40256:8080"
+      - "40257:8080"
     environment:
       - PORT=8080
       - DATABASE_URL=postgresql://postgres:postgres@db:5432/ai_portfolio
-      - GITHUB_APP_ID=${GITHUB_APP_ID}
-      - GITHUB_APP_PRIVATE_KEY=${GITHUB_APP_PRIVATE_KEY}
+      - GITHUB_APP_ID=1924157
+      - GITHUB_APP_PRIVATE_KEY_PATH=/run/secrets/github_app_private_key
       - GITHUB_WEBHOOK_SECRET=${GITHUB_WEBHOOK_SECRET}
-      - OAUTH_GITHUB_CLIENT_ID=${OAUTH_GITHUB_CLIENT_ID}
-      - OAUTH_GITHUB_CLIENT_SECRET=${OAUTH_GITHUB_CLIENT_SECRET}
+      - OAUTH_GITHUB_CLIENT_ID=Iv23liYNGNeBYvjggHMm
+      - OAUTH_GITHUB_CLIENT_SECRET=7eab6782cd45d67147fd870ea0f677350a80e36a 
       - CONTRIBUTOR_WINDOW_DAYS=90
-      - ALLOWED_ORGS=${ALLOWED_ORGS}
-      - ADMIN_BASIC_AUTH_USER=${ADMIN_BASIC_AUTH_USER}
-      - ADMIN_BASIC_AUTH_PASS=${ADMIN_BASIC_AUTH_PASS}
+      - ALLOWED_ORGS=*
+      - ADMIN_BASIC_AUTH_USER=admin
+      - ADMIN_BASIC_AUTH_PASS=admin
     depends_on:
       db:
         condition: service_healthy
@@ -47,16 +47,18 @@ services:
     volumes:
       - ./backend:/app
     command: ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8080", "--reload"]
+    secrets:
+      - github_app_private_key
 
   web:
     build:
       context: ./frontend
       dockerfile: Dockerfile
     ports:
-      - "45522:5173"
+      - "45523:5173"
     environment:
-      - VITE_API_BASE_URL=http://localhost:40256
-      - VITE_GITHUB_APP_INSTALL_URL=${VITE_GITHUB_APP_INSTALL_URL}
+      - VITE_API_BASE_URL=http://localhost:40257
+      - VITE_GITHUB_APP_INSTALL_URL=https://github.com/apps/ai-portfolio-console/installations/new
     volumes:
       - ./frontend:/app
       - /app/node_modules
@@ -64,3 +66,7 @@ services:
 
 volumes:
   postgres_data:
+
+secrets:
+  github_app_private_key:
+    file: ./secrets/github_app_private_key.pem.example

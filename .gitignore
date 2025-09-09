@@ -127,3 +127,6 @@ temp/
 
 # Test files
 test_e2e.py
+
+# Secrets
+secrets/
