@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Search, Plus, SortAsc, SortDesc } from 'lucide-react';
-import { Project, ProjectsResponse, ProjectDetail as ProjectDetailType } from '../types';
+import { Project, ProjectDetail, ProjectsResponse } from '../types';
 import { projectsApi } from '../services/api';
 import ProjectTable from '../components/ProjectTable';
 import ProjectDetail from '../components/ProjectDetail';
@@ -11,7 +11,7 @@ const Dashboard: React.FC = () => {
   const [projects, setProjects] = useState<Project[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
-  const [selectedProject, setSelectedProject] = useState<ProjectDetailType | null>(null);
+  const [selectedProject, setSelectedProject] = useState<ProjectDetail | null>(null);
   const [showAddModal, setShowAddModal] = useState(false);
   const [addingProject, setAddingProject] = useState(false);
   const [refreshingIds, setRefreshingIds] = useState<Set<string>>(new Set());

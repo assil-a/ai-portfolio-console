@@ -1,7 +1,7 @@
 import axios from 'axios';
 import { Project, ProjectDetail, ProjectsResponse, ProjectSubmission } from '../types';
 
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:40257';
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:40256';
 
 const api = axios.create({
   baseURL: API_BASE_URL,
@@ -33,7 +33,7 @@ export const projectsApi = {
     order?: string;
     search?: string;
   }): Promise<ProjectsResponse> => {
-    const response = await api.get('/projects/', { params });
+    const response = await api.get('/projects', { params });
     return response.data;
   },
 
@@ -45,7 +45,7 @@ export const projectsApi = {
 
   // Create new project
   create: async (submission: ProjectSubmission): Promise<ProjectDetail> => {
-    const response = await api.post('/projects/', submission);
+    const response = await api.post('/projects', submission);
     return response.data;
   },
 
