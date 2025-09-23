@@ -144,22 +144,22 @@ const Dashboard: React.FC = () => {
       Math.floor((Date.now() - new Date(project.last_commit_at).getTime()) / (1000 * 60 * 60 * 24)) : 999;
     
     if (daysSinceUpdate < 7) {
-      return <Badge className="bg-green-100 text-green-800 hover:bg-green-100">active</Badge>;
+      return <Badge variant="success">active</Badge>;
     } else if (daysSinceUpdate < 30) {
-      return <Badge className="bg-yellow-100 text-yellow-800 hover:bg-yellow-100">moderate</Badge>;
+      return <Badge variant="warning">moderate</Badge>;
     } else {
-      return <Badge className="bg-gray-100 text-gray-800 hover:bg-gray-100">archived</Badge>;
+      return <Badge variant="secondary">archived</Badge>;
     }
   };
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-bg">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
         {/* Header */}
         <div className="mb-8 flex items-center justify-between">
           <div>
-            <h1 className="text-3xl font-bold text-gray-900">Analytics Dashboard</h1>
-            <p className="mt-1 text-gray-600">GitHub Repository Insights</p>
+            <h1 className="text-3xl font-semibold text-text-primary">Repository Analytics</h1>
+            <p className="mt-1 text-text-tertiary">Monitor your GitHub repositories performance and activity</p>
           </div>
           <div className="flex items-center space-x-4">
             <div className="relative">
@@ -170,7 +170,7 @@ const Dashboard: React.FC = () => {
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
                 onKeyPress={(e) => e.key === 'Enter' && handleSearch(e)}
-                className="pl-10 w-80 bg-white border-gray-300"
+                className="pl-10 w-80"
               />
             </div>
             <Button variant="outline" size="sm">
@@ -180,7 +180,7 @@ const Dashboard: React.FC = () => {
             <Button variant="outline" size="sm">
               <MoreHorizontal className="h-4 w-4" />
             </Button>
-            <Button onClick={() => setShowAddModal(true)} size="sm" className="bg-green-600 hover:bg-green-700 text-white">
+            <Button onClick={() => setShowAddModal(true)} size="sm">
               <Plus className="mr-2 h-4 w-4" />
               Add Repository
             </Button>
@@ -203,7 +203,7 @@ const Dashboard: React.FC = () => {
             change="+12.5%"
             changeType="positive"
             icon={<Star className="h-6 w-6" />}
-            iconColor="text-green-500"
+            iconColor="text-accent"
           />
           <MetricCard
             title="Active Repositories"
@@ -211,7 +211,7 @@ const Dashboard: React.FC = () => {
             change="+2 this month"
             changeType="positive"
             icon={<GitBranch className="h-6 w-6" />}
-            iconColor="text-green-500"
+            iconColor="text-accent"
           />
           <MetricCard
             title="Pull Requests"
@@ -219,7 +219,7 @@ const Dashboard: React.FC = () => {
             change="+18 open"
             changeType="positive"
             icon={<GitPullRequest className="h-6 w-6" />}
-            iconColor="text-green-500"
+            iconColor="text-accent"
           />
           <MetricCard
             title="Contributors"
@@ -227,17 +227,17 @@ const Dashboard: React.FC = () => {
             change="+7 this quarter"
             changeType="positive"
             icon={<Users className="h-6 w-6" />}
-            iconColor="text-green-500"
+            iconColor="text-accent"
           />
         </div>
 
         {/* Charts Section */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
           {/* Commit Activity Chart */}
-          <Card className="bg-white border border-gray-200">
+          <Card className="luxe-panel">
             <CardHeader>
-              <CardTitle className="text-lg font-semibold text-gray-900">Commit Activity</CardTitle>
-              <p className="text-sm text-gray-600">Monthly commit trends across all repositories</p>
+              <CardTitle className="text-lg font-semibold text-text-primary">Commit Activity</CardTitle>
+              <p className="text-sm text-text-tertiary">Monthly commit trends across all repositories</p>
             </CardHeader>
             <CardContent>
               <AreaChart data={commitActivityData} height={250} color="#10b981" />
@@ -245,10 +245,10 @@ const Dashboard: React.FC = () => {
           </Card>
 
           {/* Pull Request Trends Chart */}
-          <Card className="bg-white border border-gray-200">
+          <Card className="luxe-panel">
             <CardHeader>
-              <CardTitle className="text-lg font-semibold text-gray-900">Pull Request Trends</CardTitle>
-              <p className="text-sm text-gray-600">Monthly PR activity and review cycles</p>
+              <CardTitle className="text-lg font-semibold text-text-primary">Pull Request Trends</CardTitle>
+              <p className="text-sm text-text-tertiary">Monthly PR activity and review cycles</p>
             </CardHeader>
             <CardContent>
               <LineChart data={pullRequestTrendsData} height={250} color="#10b981" />
@@ -257,10 +257,10 @@ const Dashboard: React.FC = () => {
         </div>
 
         {/* Repository Overview Table */}
-        <Card className="bg-white border border-gray-200">
+        <Card className="luxe-panel">
           <CardHeader>
-            <CardTitle className="text-lg font-semibold text-gray-900">Repository Overview</CardTitle>
-            <p className="text-sm text-gray-600">Detailed stats for all your repositories</p>
+            <CardTitle className="text-lg font-semibold text-text-primary">Repository Overview</CardTitle>
+            <p className="text-sm text-text-tertiary">Detailed stats for all your repositories</p>
           </CardHeader>
           <CardContent>
             {loading ? (
@@ -271,39 +271,39 @@ const Dashboard: React.FC = () => {
               <div className="overflow-x-auto">
                 <table className="w-full">
                   <thead>
-                    <tr className="border-b border-gray-200">
-                      <th className="text-left py-3 px-4 font-medium text-gray-600">Repository</th>
-                      <th className="text-left py-3 px-4 font-medium text-gray-600">Language</th>
-                      <th className="text-left py-3 px-4 font-medium text-gray-600">⭐ Stars</th>
-                      <th className="text-left py-3 px-4 font-medium text-gray-600">🍴 Forks</th>
-                      <th className="text-left py-3 px-4 font-medium text-gray-600">👀 Watchers</th>
-                      <th className="text-left py-3 px-4 font-medium text-gray-600">Issues</th>
-                      <th className="text-left py-3 px-4 font-medium text-gray-600">Status</th>
+                    <tr className="border-b border-border-hairline">
+                      <th className="text-left py-3 px-4 font-medium text-text-tertiary">Repository</th>
+                      <th className="text-left py-3 px-4 font-medium text-text-tertiary">Language</th>
+                      <th className="text-left py-3 px-4 font-medium text-text-tertiary">⭐ Stars</th>
+                      <th className="text-left py-3 px-4 font-medium text-text-tertiary">🍴 Forks</th>
+                      <th className="text-left py-3 px-4 font-medium text-text-tertiary">👀 Watchers</th>
+                      <th className="text-left py-3 px-4 font-medium text-text-tertiary">Issues</th>
+                      <th className="text-left py-3 px-4 font-medium text-text-tertiary">Status</th>
                     </tr>
                   </thead>
                   <tbody>
                     {projects.map((project) => (
                       <tr 
                         key={project.id} 
-                        className="border-b border-gray-100 hover:bg-gray-50 cursor-pointer"
+                        className="border-b border-border-hairline hover:bg-panel-elev cursor-pointer"
                         onClick={() => handleProjectClick(project)}
                       >
                         <td className="py-3 px-4">
-                          <div className="font-medium text-gray-900">{project.name}</div>
+                          <div className="font-medium text-text-primary">{project.name}</div>
                         </td>
                         <td className="py-3 px-4">
-                          <span className="text-gray-600">{getLanguageFromName(project.name)}</span>
+                          <span className="text-text-secondary">{getLanguageFromName(project.name)}</span>
                         </td>
-                        <td className="py-3 px-4 text-gray-900">
+                        <td className="py-3 px-4 text-text-primary">
                           {Math.floor(Math.random() * 1000) + 100}
                         </td>
-                        <td className="py-3 px-4 text-gray-900">
+                        <td className="py-3 px-4 text-text-primary">
                           {Math.floor(Math.random() * 200) + 20}
                         </td>
-                        <td className="py-3 px-4 text-gray-900">
+                        <td className="py-3 px-4 text-text-primary">
                           {Math.floor(Math.random() * 100) + 10}
                         </td>
-                        <td className="py-3 px-4 text-gray-900">
+                        <td className="py-3 px-4 text-text-primary">
                           {Math.floor(Math.random() * 20)}
                         </td>
                         <td className="py-3 px-4">

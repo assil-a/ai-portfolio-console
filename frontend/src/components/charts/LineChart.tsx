@@ -18,7 +18,7 @@ const LineChart: React.FC<LineChartProps> = ({
 }) => {
   if (!data || data.length === 0) {
     return (
-      <div className="flex items-center justify-center h-48 text-gray-500">
+      <div className="flex items-center justify-center h-48 text-text-tertiary">
         No data available
       </div>
     );
@@ -58,7 +58,7 @@ const LineChart: React.FC<LineChartProps> = ({
             y1={label.y}
             x2={padding + chartWidth}
             y2={label.y}
-            stroke="#f3f4f6"
+            stroke="hsl(var(--border-hairline))"
             strokeWidth="1"
           />
         ))}
@@ -82,7 +82,7 @@ const LineChart: React.FC<LineChartProps> = ({
               cy={y}
               r="4"
               fill={color}
-              stroke="white"
+              stroke="hsl(var(--panel))"
               strokeWidth="2"
             />
           );
@@ -95,7 +95,8 @@ const LineChart: React.FC<LineChartProps> = ({
             x={padding - 10}
             y={label.y + 4}
             textAnchor="end"
-            className="text-xs fill-gray-500"
+            fill="hsl(var(--text-tertiary))"
+            className="text-xs"
           >
             {label.value}
           </text>
@@ -110,7 +111,8 @@ const LineChart: React.FC<LineChartProps> = ({
               x={x}
               y={height - 10}
               textAnchor="middle"
-              className="text-xs fill-gray-500"
+              fill="hsl(var(--text-tertiary))"
+            className="text-xs"
             >
               {point.month}
             </text>

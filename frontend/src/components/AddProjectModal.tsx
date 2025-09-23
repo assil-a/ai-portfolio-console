@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import { X, Plus, AlertCircle } from 'lucide-react';
 import clsx from 'clsx';
+import { Input } from './ui/input';
+import { Button } from './ui/button';
 
 interface AddProjectModalProps {
   isOpen: boolean;
@@ -53,13 +55,13 @@ const AddProjectModal: React.FC<AddProjectModalProps> = ({
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full z-50">
-      <div className="relative top-20 mx-auto p-5 border w-96 shadow-lg rounded-md bg-white">
+    <div className="fixed inset-0 bg-black/60 overflow-y-auto h-full w-full z-50">
+      <div className="relative top-20 mx-auto p-5 border-hairline border-border-hairline w-96 shadow-lg rounded-md bg-panel elev-2">
         <div className="flex items-center justify-between mb-4">
-          <h3 className="text-lg font-medium text-gray-900">Add Repository</h3>
+          <h3 className="text-lg font-medium text-text-primary">Add Repository</h3>
           <button
             onClick={handleClose}
-            className="text-gray-400 hover:text-gray-600"
+            className="text-text-tertiary hover:text-text-secondary"
             disabled={loading}
           >
             <X className="h-6 w-6" />
@@ -68,23 +70,20 @@ const AddProjectModal: React.FC<AddProjectModalProps> = ({
 
         <form onSubmit={handleSubmit}>
           <div className="mb-4">
-            <label htmlFor="repo-url" className="block text-sm font-medium text-gray-700 mb-2">
+            <label htmlFor="repo-url" className="block text-sm font-medium text-text-secondary mb-2">
               GitHub Repository URL
             </label>
-            <input
+            <Input
               type="url"
               id="repo-url"
               value={repoUrl}
               onChange={(e) => setRepoUrl(e.target.value)}
               placeholder="https://github.com/owner/repository"
-              className={clsx(
-                'w-full px-3 py-2 border rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500',
-                error ? 'border-red-300' : 'border-gray-300'
-              )}
+              className={clsx(error && 'border-danger focus-visible:ring-danger')}
               disabled={loading}
             />
             {error && (
-              <div className="mt-2 flex items-start text-sm text-red-600">
+              <div className="mt-2 flex items-start text-sm text-danger">
                 <AlertCircle className="h-4 w-4 mr-1 mt-0.5 flex-shrink-0" />
                 <div>
                   {error.includes('https://github.com/apps/') || error.includes('https://github.com/settings/installations') ? (
@@ -99,31 +98,28 @@ const AddProjectModal: React.FC<AddProjectModalProps> = ({
             )}
           </div>
 
-          <div className="mb-4 p-3 bg-blue-50 rounded-md">
-            <p className="text-sm text-blue-800">
+          <div className="mb-4 p-3 rounded-md border-hairline border-accent/30 bg-accent/10">
+            <p className="text-sm text-accent">
               <strong>Note:</strong> Make sure the GitHub App is installed on the repository
               or that you have OAuth access to private repositories.
             </p>
           </div>
 
           <div className="flex justify-end space-x-3">
-            <button
+            <Button
               type="button"
               onClick={handleClose}
-              className="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-100 border border-gray-300 rounded-md hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500"
+              variant="secondary"
+              size="sm"
               disabled={loading}
             >
               Cancel
-            </button>
-            <button
+            </Button>
+            <Button
               type="submit"
               disabled={loading}
-              className={clsx(
-                'px-4 py-2 text-sm font-medium text-white bg-blue-600 border border-transparent rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500',
-                loading
-                  ? 'opacity-50 cursor-not-allowed'
-                  : 'hover:bg-blue-700'
-              )}
+              size="sm"
+              className={clsx('', loading && 'opacity-50 cursor-not-allowed')}
             >
               {loading ? (
                 <div className="flex items-center">
@@ -136,7 +132,7 @@ const AddProjectModal: React.FC<AddProjectModalProps> = ({
                   Add Repository
                 </div>
               )}
-            </button>
+            </Button>
           </div>
         </form>
       </div>

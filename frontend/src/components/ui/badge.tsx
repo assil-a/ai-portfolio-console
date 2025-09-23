@@ -4,15 +4,15 @@ import { cn } from "../../lib/utils"
 type BadgeVariant = "default" | "secondary" | "destructive" | "success" | "warning" | "outline"
 
 const getBadgeClasses = (variant: BadgeVariant = "default") => {
-  const baseClasses = "inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-semibold transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+  const baseClasses = "inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-semibold transition-colors focus:outline-none focus:ring-2 focus:ring-accent focus:ring-offset-background"
 
   const variants = {
-    default: "border-transparent bg-blue-600 text-white hover:bg-blue-700",
-    secondary: "border-transparent bg-gray-100 text-gray-900 hover:bg-gray-200",
-    destructive: "border-transparent bg-red-600 text-white hover:bg-red-700",
-    success: "border-transparent bg-green-500 text-white hover:bg-green-600",
-    warning: "border-transparent bg-yellow-500 text-white hover:bg-yellow-600",
-    outline: "text-gray-900 border-gray-300",
+    default: "border-accent/30 bg-accent/15 text-accent",
+    secondary: "border-border-hairline bg-panel-elev text-text-secondary",
+    destructive: "border-danger/30 bg-danger/15 text-danger",
+    success: "border-success/30 bg-success/15 text-success",
+    warning: "border-warning/30 bg-warning/15 text-warning",
+    outline: "text-text-primary border-border-hairline bg-transparent",
   }
 
   return `${baseClasses} ${variants[variant]}`

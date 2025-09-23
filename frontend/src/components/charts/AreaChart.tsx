@@ -18,7 +18,7 @@ const AreaChart: React.FC<AreaChartProps> = ({
 }) => {
   if (!data || data.length === 0) {
     return (
-      <div className="flex items-center justify-center h-48 text-gray-500">
+      <div className="flex items-center justify-center h-48 text-text-tertiary">
         No data available
       </div>
     );
@@ -66,7 +66,7 @@ const AreaChart: React.FC<AreaChartProps> = ({
             y1={label.y}
             x2={padding + chartWidth}
             y2={label.y}
-            stroke="#f3f4f6"
+            stroke="hsl(var(--border-hairline))"
             strokeWidth="1"
           />
         ))}
@@ -97,7 +97,7 @@ const AreaChart: React.FC<AreaChartProps> = ({
               cy={y}
               r="3"
               fill={color}
-              stroke="white"
+              stroke="hsl(var(--panel))"
               strokeWidth="2"
             />
           );
@@ -110,7 +110,8 @@ const AreaChart: React.FC<AreaChartProps> = ({
             x={padding - 10}
             y={label.y + 4}
             textAnchor="end"
-            className="text-xs fill-gray-500"
+            fill="hsl(var(--text-tertiary))"
+            className="text-xs"
           >
             {label.value}
           </text>
@@ -125,7 +126,8 @@ const AreaChart: React.FC<AreaChartProps> = ({
               x={x}
               y={height - 10}
               textAnchor="middle"
-              className="text-xs fill-gray-500"
+              fill="hsl(var(--text-tertiary))"
+            className="text-xs"
             >
               {point.month}
             </text>

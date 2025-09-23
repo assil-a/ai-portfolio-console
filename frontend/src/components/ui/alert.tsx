@@ -7,11 +7,11 @@ const getAlertClasses = (variant: AlertVariant = "default") => {
   const baseClasses = "relative w-full rounded-lg border p-4"
 
   const variants = {
-    default: "bg-white text-gray-900 border-gray-200",
-    destructive: "border-red-200 text-red-800 bg-red-50",
-    success: "border-green-200 text-green-800 bg-green-50",
-    warning: "border-yellow-200 text-yellow-800 bg-yellow-50",
-    info: "border-blue-200 text-blue-800 bg-blue-50",
+    default: "bg-panel text-text-primary border-border-hairline",
+    destructive: "border-danger text-danger bg-danger/10",
+    success: "border-success text-success bg-success/10",
+    warning: "border-warning text-warning bg-warning/10",
+    info: "border-accent text-accent bg-accent/10",
   }
 
   return `${baseClasses} ${variants[variant]}`

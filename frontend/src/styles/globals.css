@@ -54,19 +54,19 @@
 
   .dark {
     /* Monochrome Luxe - Dark */
-    --bg: 0 0% 6%;
+    --bg: 0 0% 10%;
     --fg: 0 0% 96%;
-    --panel: 0 0% 8%;
-    --panel-elev: 0 0% 10%;
-    --border-hairline: 0 0% 15%;
-    --border: 0 0% 20%;
-    --border-strong: 0 0% 30%;
+    --panel: 0 0% 12%;
+    --panel-elev: 0 0% 14%;
+    --border-hairline: 0 0% 18%;
+    --border: 0 0% 22%;
+    --border-strong: 0 0% 32%;
 
     /* Emerald Accent - Dark Mode */
     --accent: 160 84% 45%;
     --accent-fg: 0 0% 8%;
-    --accent-subtle: 158 64% 8%;
-    --accent-surface: 159 60% 12%;
+    --accent-subtle: 158 64% 10%;
+    --accent-surface: 159 60% 14%;
 
     /* Semantic Colors - Dark */
     --success: 158 64% 52%;
@@ -80,23 +80,23 @@
     --text-quaternary: 0 0% 42%;
 
     /* Legacy mappings - Dark */
-    --background: 0 0% 6%;
+    --background: 0 0% 10%;
     --foreground: 0 0% 96%;
-    --card: 0 0% 8%;
+    --card: 0 0% 12%;
     --card-foreground: 0 0% 96%;
-    --popover: 0 0% 10%;
+    --popover: 0 0% 14%;
     --popover-foreground: 0 0% 96%;
     --primary: 160 84% 45%;
     --primary-foreground: 0 0% 8%;
-    --secondary: 0 0% 12%;
+    --secondary: 0 0% 16%;
     --secondary-foreground: 0 0% 86%;
-    --muted: 0 0% 12%;
+    --muted: 0 0% 16%;
     --muted-foreground: 0 0% 68%;
     --accent-legacy: 160 84% 45%;
     --accent-foreground: 0 0% 8%;
     --destructive: 358 75% 65%;
     --destructive-foreground: 0 0% 96%;
-    --input: 0 0% 8%;
+    --input: 0 0% 12%;
     --ring: 160 84% 45%;
   }
 }

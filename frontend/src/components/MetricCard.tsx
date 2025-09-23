@@ -16,26 +16,26 @@ const MetricCard: React.FC<MetricCardProps> = ({
   change,
   changeType = 'neutral',
   icon,
-  iconColor = 'text-green-500'
+  iconColor = 'text-accent'
 }) => {
   const getChangeColor = () => {
     switch (changeType) {
       case 'positive':
-        return 'text-green-600';
+        return 'text-success';
       case 'negative':
-        return 'text-red-600';
+        return 'text-danger';
       default:
-        return 'text-gray-600';
+        return 'text-text-secondary';
     }
   };
 
   return (
-    <Card className="bg-white border border-gray-200 hover:shadow-md transition-shadow">
+    <Card className="luxe-panel elev-1 hover:elev-2 transition-shadow">
       <CardContent className="p-6">
         <div className="flex items-center justify-between">
           <div className="flex-1">
-            <p className="text-sm font-medium text-gray-600 mb-1">{title}</p>
-            <p className="text-2xl font-bold text-gray-900 mb-1">{value}</p>
+            <p className="text-data-md text-text-tertiary mb-1">{title}</p>
+            <p className="text-2xl font-semibold text-text-primary mb-1">{value}</p>
             {change && (
               <p className={`text-sm font-medium ${getChangeColor()}`}>
                 {change}
