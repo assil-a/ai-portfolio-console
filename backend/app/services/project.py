@@ -45,7 +45,9 @@ class ProjectService:
         await db.flush()  # Get the project ID
         
         # Create contributor records
-        await self._update_contributors(db, project.id, repo_data['contributors'])
+        # Ensure project.id is a proper UUID
+        project_id = project.id if isinstance(project.id, uuid.UUID) else uuid.UUID(str(project.id))
+        await self._update_contributors(db, project_id, repo_data['contributors'])
         
         await db.commit()
         await db.refresh(project)
@@ -203,8 +205,9 @@ class ProjectService:
     async def _update_contributors(self, db: AsyncSession, project_id: uuid.UUID, contributors_data: Dict[str, Dict]):
         """Update contributors for a project."""
         # Delete existing contributors
+        from sqlalchemy import delete
         await db.execute(
-            select(ProjectContributor).where(ProjectContributor.project_id == project_id)
+            delete(ProjectContributor).where(ProjectContributor.project_id == project_id)
         )
         
         # Create new contributor records

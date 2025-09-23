@@ -18,7 +18,7 @@ else:
 class Project(Base):
     __tablename__ = "projects"
 
-    id = UUIDColumn(primary_key=True, default=lambda: str(uuid.uuid4()))
+    id = UUIDColumn(primary_key=True, default=uuid.uuid4)
     owner = Column(String, nullable=False)
     name = Column(String, nullable=False)
     html_url = Column(Text, nullable=False)
@@ -41,7 +41,7 @@ class Project(Base):
 class ProjectContributor(Base):
     __tablename__ = "project_contributors"
 
-    id = UUIDColumn(primary_key=True, default=lambda: str(uuid.uuid4()))
+    id = UUIDColumn(primary_key=True, default=uuid.uuid4)
     project_id = UUIDColumn(ForeignKey("projects.id", ondelete="CASCADE"), nullable=False)
     login = Column(String, nullable=False)
     commits_90d = Column(Integer, nullable=False, default=0)

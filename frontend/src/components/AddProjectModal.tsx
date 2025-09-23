@@ -84,9 +84,17 @@ const AddProjectModal: React.FC<AddProjectModalProps> = ({
               disabled={loading}
             />
             {error && (
-              <div className="mt-2 flex items-center text-sm text-red-600">
-                <AlertCircle className="h-4 w-4 mr-1" />
-                {error}
+              <div className="mt-2 flex items-start text-sm text-red-600">
+                <AlertCircle className="h-4 w-4 mr-1 mt-0.5 flex-shrink-0" />
+                <div>
+                  {error.includes('https://github.com/apps/') || error.includes('https://github.com/settings/installations') ? (
+                    <div dangerouslySetInnerHTML={{
+                      __html: error.replace(/(https:\/\/[^\s]+)/g, '<a href="$1" target="_blank" class="underline font-medium">$1</a>')
+                    }} />
+                  ) : (
+                    error
+                  )}
+                </div>
               </div>
             )}
           </div>

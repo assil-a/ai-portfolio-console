@@ -36,72 +36,88 @@ class GitHubService:
     
     def _generate_app_token(self) -> str:
         """Generate JWT token for GitHub App authentication."""
-        if not settings.github_app_id or not settings.github_app_private_key:
-            raise ValueError("GitHub App credentials not configured")
-        
+        if not settings.github_app_id:
+            raise ValueError("GitHub App ID not configured")
+
+        try:
+            private_key = settings.load_github_app_private_key
+        except Exception as e:
+            raise ValueError(f"GitHub App private key not accessible: {e}")
+
         now = int(time.time())
         payload = {
             'iat': now - 60,  # Issued 60 seconds in the past
-            'exp': now + 600,  # Expires in 10 minutes
+            'exp': now + 540,  # Expires in 9 minutes (safer than 10)
             'iss': settings.github_app_id
         }
-        
-        return jwt.encode(payload, settings.github_app_private_key, algorithm='RS256')
+
+        return jwt.encode(payload, private_key, algorithm='RS256')
     
-    async def _get_installation_token(self, owner: str, repo: str) -> Optional[str]:
-        """Get installation access token for a specific repository."""
+    async def _get_installation_token(self, owner: str, repo: str) -> tuple[Optional[str], Optional[str]]:
+        """Get installation access token for a specific repository.
+        Returns (token, error_message)
+        """
         if not settings.github_app_configured:
-            return None
-        
+            return None, "GitHub App not configured"
+
         try:
             app_token = self._generate_app_token()
             headers = {
                 'Authorization': f'Bearer {app_token}',
-                'Accept': 'application/vnd.github.v3+json'
+                'Accept': 'application/vnd.github+json'
             }
-            
-            async with httpx.AsyncClient() as client:
+
+            async with httpx.AsyncClient(timeout=30.0) as client:
                 # Get installation for the repository
                 response = await client.get(
                     f"{self.base_url}/repos/{owner}/{repo}/installation",
                     headers=headers
                 )
-                
-                if response.status_code != 200:
-                    logger.warning(f"No GitHub App installation found for {owner}/{repo}")
-                    return None
-                
+
+                if response.status_code == 404:
+                    return None, f"GitHub App not installed on {owner}/{repo}. Install at https://github.com/apps/<APP_SLUG>/installations/new/permissions?target_id={owner}"
+                elif response.status_code == 403:
+                    return None, f"Repository {owner}/{repo} not included in installation scope. Update permissions at https://github.com/settings/installations"
+                elif response.status_code != 200:
+                    logger.warning(f"Installation lookup failed for {owner}/{repo}: {response.status_code} {response.text}")
+                    return None, f"Installation access error: {response.status_code}"
+
                 installation_id = response.json()['id']
-                
+
                 # Get access token for the installation
                 response = await client.post(
                     f"{self.base_url}/app/installations/{installation_id}/access_tokens",
                     headers=headers
                 )
-                
+
                 if response.status_code == 201:
-                    return response.json()['token']
-                
+                    return response.json()['token'], None
+                else:
+                    return None, f"Failed to create installation token: {response.status_code}"
+
+        except httpx.TimeoutException:
+            return None, "GitHub API timeout - check network connectivity"
         except Exception as e:
             logger.error(f"Failed to get installation token: {e}")
-        
-        return None
+            return None, f"Installation token error: {str(e)}"
+
+        return None, "Unknown installation token error"
     
-    async def _get_repo_access_token(self, owner: str, repo: str, user_token: Optional[str] = None) -> Tuple[Optional[str], str]:
+    async def _get_repo_access_token(self, owner: str, repo: str, user_token: Optional[str] = None) -> tuple[Optional[str], str, Optional[str]]:
         """
         Determine the best access token for a repository.
-        Returns (token, install_status)
+        Returns (token, install_status, error_message)
         """
         # Try GitHub App installation token first
-        installation_token = await self._get_installation_token(owner, repo)
+        installation_token, error_msg = await self._get_installation_token(owner, repo)
         if installation_token:
-            return installation_token, "app"
-        
+            return installation_token, "app", None
+
         # Fall back to user OAuth token if provided
         if user_token:
-            return user_token, "oauth"
-        
-        return None, "none"
+            return user_token, "oauth", None
+
+        return None, "none", error_msg
     
     async def _make_graphql_request(self, query: str, variables: Dict[str, Any], token: str) -> Dict[str, Any]:
         """Make a GraphQL request to GitHub API."""
@@ -124,10 +140,11 @@ class GitHubService:
         """
         Fetch repository activity including metadata, last commit, and contributors.
         """
-        token, install_status = await self._get_repo_access_token(owner, repo, user_token)
-        
+        token, install_status, error_msg = await self._get_repo_access_token(owner, repo, user_token)
+
         if not token:
-            raise ValueError(f"No access to repository {owner}/{repo}. Please install the GitHub App or provide OAuth access.")
+            detailed_error = error_msg or "Please install the GitHub App or provide OAuth access."
+            raise ValueError(f"No access to repository {owner}/{repo}. {detailed_error}")
         
         # Calculate the date for contributor window
         since_date = (datetime.now(timezone.utc) - timedelta(days=settings.contributor_window_days)).isoformat()

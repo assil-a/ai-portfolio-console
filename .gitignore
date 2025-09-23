@@ -2,6 +2,9 @@
 .env
 .env.local
 .env.production
+.env.example
+.env.test
+
 
 # Database files
 *.db
@@ -37,6 +40,7 @@ env/
 ENV/
 env.bak/
 venv.bak/
+*.env
 
 # Node.js
 node_modules/
@@ -124,6 +128,8 @@ dist
 # Temporary folders
 tmp/
 temp/
-
 # Test files
 test_e2e.py
+
+# Secrets
+*.pem

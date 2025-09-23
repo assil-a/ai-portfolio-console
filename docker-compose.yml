@@ -1,4 +1,4 @@
-version: '3.8'
+
 
 services:
   db:
@@ -25,17 +25,17 @@ services:
     ports:
       - "40257:8080"
     environment:
-      - PORT=8080
-      - DATABASE_URL=postgresql://postgres:postgres@db:5432/ai_portfolio
-      - GITHUB_APP_ID=${GITHUB_APP_ID}
-      - GITHUB_APP_PRIVATE_KEY=${GITHUB_APP_PRIVATE_KEY}
-      - GITHUB_WEBHOOK_SECRET=${GITHUB_WEBHOOK_SECRET}
-      - OAUTH_GITHUB_CLIENT_ID=${OAUTH_GITHUB_CLIENT_ID}
-      - OAUTH_GITHUB_CLIENT_SECRET=${OAUTH_GITHUB_CLIENT_SECRET}
-      - CONTRIBUTOR_WINDOW_DAYS=90
-      - ALLOWED_ORGS=${ALLOWED_ORGS}
-      - ADMIN_BASIC_AUTH_USER=${ADMIN_BASIC_AUTH_USER}
-      - ADMIN_BASIC_AUTH_PASS=${ADMIN_BASIC_AUTH_PASS}
+        PORT: 8080
+        DATABASE_URL: postgresql://postgres:postgres@db:5432/ai_portfolio
+        GITHUB_APP_ID: ${GITHUB_APP_ID:-}
+        GITHUB_APP_PRIVATE_KEY_PATH: /run/secrets/github_app_private_key
+        GITHUB_WEBHOOK_SECRET: ${GITHUB_WEBHOOK_SECRET:-}
+        OAUTH_GITHUB_CLIENT_ID: ${OAUTH_GITHUB_CLIENT_ID:-}
+        OAUTH_GITHUB_CLIENT_SECRET: ${OAUTH_GITHUB_CLIENT_SECRET:-}
+        CONTRIBUTOR_WINDOW_DAYS: ${CONTRIBUTOR_WINDOW_DAYS:-90}
+        ALLOWED_ORGS: ${ALLOWED_ORGS:-}
+        ADMIN_BASIC_AUTH_USER: ${ADMIN_BASIC_AUTH_USER:-}
+        ADMIN_BASIC_AUTH_PASS: ${ADMIN_BASIC_AUTH_PASS:-}
     depends_on:
       db:
         condition: service_healthy
@@ -44,9 +44,10 @@ services:
       interval: 30s
       timeout: 10s
       retries: 3
-    volumes:
-      - ./backend:/app
-    command: ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8080", "--reload"]
+    
+    command: ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8080"]
+    secrets:
+      - github_app_private_key
 
   web:
     build:
@@ -55,8 +56,8 @@ services:
     ports:
       - "45523:5173"
     environment:
-      - VITE_API_BASE_URL=http://localhost:40256
-      - VITE_GITHUB_APP_INSTALL_URL=${VITE_GITHUB_APP_INSTALL_URL}
+      - VITE_API_BASE_URL=http://localhost:40257
+      - VITE_GITHUB_APP_INSTALL_URL=https://github.com/apps/ai-portfolio-console/installations/new
     volumes:
       - ./frontend:/app
       - /app/node_modules
@@ -64,6 +65,7 @@ services:
 
 volumes:
   postgres_data:
+
 secrets:
   github_app_private_key:
-    file: ./secrets/github_app_private_key.pem.example
+    file: ./secrets/secret-key.pem
