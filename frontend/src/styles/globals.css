@@ -13,11 +13,16 @@
     --border: 0 0% 86%;
     --border-strong: 0 0% 78%;
 
-    /* Emerald Accent */
-    --accent: 160 84% 39%;
+    /* GitHub Blue Accent */
+    --accent: 212 92% 45%;
     --accent-fg: 0 0% 100%;
-    --accent-subtle: 158 64% 99%;
-    --accent-surface: 159 60% 94%;
+    --accent-hover: 212 92% 40%;
+    --accent-subtle: 212 92% 97%;
+    --accent-surface: 212 92% 92%;
+
+    /* Navigation Colors */
+    --nav-bg: 0 0% 98%;
+    --nav-item-hover: 0 0% 96%;
 
     /* Semantic Colors */
     --success: 158 64% 52%;
@@ -62,11 +67,16 @@
     --border: 0 0% 22%;
     --border-strong: 0 0% 32%;
 
-    /* Emerald Accent - Dark Mode */
-    --accent: 160 84% 45%;
+    /* GitHub Blue Accent - Dark Mode */
+    --accent: 212 92% 50%;
     --accent-fg: 0 0% 8%;
-    --accent-subtle: 158 64% 10%;
-    --accent-surface: 159 60% 14%;
+    --accent-hover: 212 92% 45%;
+    --accent-subtle: 212 92% 8%;
+    --accent-surface: 212 92% 12%;
+
+    /* Navigation Colors - Dark */
+    --nav-bg: 0 0% 8%;
+    --nav-item-hover: 0 0% 13%;
 
     /* Semantic Colors - Dark */
     --success: 158 64% 52%;

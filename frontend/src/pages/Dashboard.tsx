@@ -153,50 +153,41 @@ const Dashboard: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-bg">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
-        {/* Header */}
-        <div className="mb-8 flex items-center justify-between">
-          <div>
-            <h1 className="text-3xl font-semibold text-text-primary">Repository Analytics</h1>
-            <p className="mt-1 text-text-tertiary">Monitor your GitHub repositories performance and activity</p>
-          </div>
-          <div className="flex items-center space-x-4">
-            <div className="relative">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
-              <Input
-                type="text"
-                placeholder="Search repositories..."
-                value={search}
-                onChange={(e) => setSearch(e.target.value)}
-                onKeyPress={(e) => e.key === 'Enter' && handleSearch(e)}
-                className="pl-10 w-80"
-              />
-            </div>
-            <Button variant="outline" size="sm">
-              <Filter className="mr-2 h-4 w-4" />
-              Filter
-            </Button>
-            <Button variant="outline" size="sm">
-              <MoreHorizontal className="h-4 w-4" />
-            </Button>
-            <Button onClick={() => setShowAddModal(true)} size="sm">
-              <Plus className="mr-2 h-4 w-4" />
-              Add Repository
-            </Button>
-            <ThemeToggle />
-          </div>
+    <div className="space-y-6">
+      {/* Page Header */}
+      <div className="flex items-center justify-between">
+        <div>
+          <h1 className="text-2xl font-semibold text-text-primary">Repository Analytics</h1>
+          <p className="mt-1 text-text-tertiary">Monitor your GitHub repositories performance and activity</p>
         </div>
+        <div className="flex items-center space-x-3">
+          <div className="relative">
+            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-text-quaternary h-4 w-4" />
+            <Input
+              type="text"
+              placeholder="Search repositories..."
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              onKeyPress={(e) => e.key === 'Enter' && handleSearch(e)}
+              className="pl-10 w-80 bg-bg border-border-hairline"
+            />
+          </div>
+          <Button variant="outline" size="sm">
+            <Filter className="mr-2 h-4 w-4" />
+            Filter
+          </Button>
+        </div>
+      </div>
 
-        {/* Error Message */}
-        {error && (
-          <Alert variant="destructive" className="mb-6">
-            <AlertDescription>{error}</AlertDescription>
-          </Alert>
-        )}
+      {/* Error Message */}
+      {error && (
+        <Alert variant="destructive">
+          <AlertDescription>{error}</AlertDescription>
+        </Alert>
+      )}
 
-        {/* Metrics Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+      {/* Metrics Cards */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
           <MetricCard
             title="Total Stars"
             value="2.9k"
@@ -229,10 +220,10 @@ const Dashboard: React.FC = () => {
             icon={<Users className="h-6 w-6" />}
             iconColor="text-accent"
           />
-        </div>
+      </div>
 
-        {/* Charts Section */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+      {/* Charts Section */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           {/* Commit Activity Chart */}
           <Card className="luxe-panel">
             <CardHeader>
@@ -254,10 +245,10 @@ const Dashboard: React.FC = () => {
               <LineChart data={pullRequestTrendsData} height={250} color="#10b981" />
             </CardContent>
           </Card>
-        </div>
+      </div>
 
-        {/* Repository Overview Table */}
-        <Card className="luxe-panel">
+      {/* Repository Overview Table */}
+      <Card className="luxe-panel">
           <CardHeader>
             <CardTitle className="text-lg font-semibold text-text-primary">Repository Overview</CardTitle>
             <p className="text-sm text-text-tertiary">Detailed stats for all your repositories</p>
@@ -316,8 +307,7 @@ const Dashboard: React.FC = () => {
               </div>
             )}
           </CardContent>
-        </Card>
-      </div>
+      </Card>
 
       {/* Project Detail Modal */}
       {selectedProject && (

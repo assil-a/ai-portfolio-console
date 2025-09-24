@@ -23,13 +23,18 @@ export default {
         "border-hairline": "hsl(var(--border-hairline))",
         "border-strong": "hsl(var(--border-strong))",
 
-        // Emerald Accent
+        // GitHub Blue Accent
         accent: {
           DEFAULT: "hsl(var(--accent))",
           fg: "hsl(var(--accent-fg))",
+          hover: "hsl(var(--accent-hover))",
           subtle: "hsl(var(--accent-subtle))",
           surface: "hsl(var(--accent-surface))",
         },
+
+        // Navigation Colors
+        "nav-bg": "hsl(var(--nav-bg))",
+        "nav-item-hover": "hsl(var(--nav-item-hover))",
 
         // Text Hierarchy
         text: {
