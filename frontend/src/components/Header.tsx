@@ -44,8 +44,8 @@ const Header: React.FC<HeaderProps> = ({
         
         {/* Logo/Brand */}
         <div className="flex items-center space-x-3">
-          <div className="w-8 h-8 bg-accent rounded-md flex items-center justify-center">
-            <span className="text-accent-fg font-bold text-sm">GA</span>
+          <div className="w-8 h-8 bg-border-strong rounded-md flex items-center justify-center">
+            <span className="text-text-primary font-bold text-sm">GA</span>
           </div>
           <div>
             <h1 className="text-lg font-semibold text-text-primary">GitHub Analytics</h1>

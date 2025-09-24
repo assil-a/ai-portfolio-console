@@ -3,6 +3,7 @@ import { useLocation } from 'react-router-dom';
 import Header from './Header';
 import SideNav from './SideNav';
 import MobileNav from './MobileNav';
+import Footer from './Footer';
 import SkipLink from './SkipLink';
 
 interface LayoutProps {
@@ -18,13 +19,12 @@ const Layout: React.FC<LayoutProps> = ({ children, onAddRepository, onSearch, se
   const location = useLocation();
 
   return (
-    <div className="min-h-screen bg-bg text-fg">
+    <div className="min-h-screen bg-bg text-fg flex flex-col">
       <SkipLink />
       
       {/* Desktop Layout */}
-      <div className="hidden lg:grid lg:grid-cols-[280px_1fr] lg:grid-rows-[64px_1fr] lg:h-screen">
+      <div className="hidden lg:flex lg:flex-col lg:min-h-screen">
         <Header 
-          className="col-span-2"
           onMenuClick={() => setSidebarCollapsed(!sidebarCollapsed)}
           menuOpen={sidebarCollapsed}
           onAddRepository={onAddRepository}
@@ -32,31 +32,36 @@ const Layout: React.FC<LayoutProps> = ({ children, onAddRepository, onSearch, se
           searchValue={searchValue}
         />
         
-        <aside 
-          className={`bg-nav-bg border-r border-border-hairline transition-all duration-200 ${
-            sidebarCollapsed ? 'w-16' : 'w-[280px]'
-          }`}
-          aria-label="Primary navigation"
-        >
-          <SideNav 
-            currentPath={location.pathname}
-            collapsed={sidebarCollapsed}
-          />
-        </aside>
-        
-        <main 
-          id="main" 
-          role="main" 
-          className="overflow-auto bg-bg"
-        >
-          <div className="p-6 max-w-7xl mx-auto">
-            {children}
+        <div className="flex flex-1">
+          <aside 
+            className={`bg-nav-bg border-r border-border-hairline transition-all duration-200 ${
+              sidebarCollapsed ? 'w-16' : 'w-[280px]'
+            }`}
+            aria-label="Primary navigation"
+          >
+            <SideNav 
+              currentPath={location.pathname}
+              collapsed={sidebarCollapsed}
+            />
+          </aside>
+          
+          <div className="flex-1 flex flex-col">
+            <main 
+              id="main" 
+              role="main" 
+              className="flex-1 overflow-auto bg-bg"
+            >
+              <div className="p-6 max-w-7xl mx-auto">
+                {children}
+              </div>
+            </main>
+            <Footer />
           </div>
-        </main>
+        </div>
       </div>
 
       {/* Mobile Layout */}
-      <div className="lg:hidden">
+      <div className="lg:hidden flex flex-col min-h-screen">
         <Header 
           onMenuClick={() => setMobileNavOpen(true)}
           menuOpen={mobileNavOpen}
@@ -69,11 +74,12 @@ const Layout: React.FC<LayoutProps> = ({ children, onAddRepository, onSearch, se
         <main 
           id="main" 
           role="main" 
-          className="pt-16 pb-20 px-4"
+          className="flex-1 pt-16 pb-20 px-4"
         >
           {children}
         </main>
         
+        <Footer />
         <MobileNav currentPath={location.pathname} />
         
         {/* Mobile Sidebar Overlay */}

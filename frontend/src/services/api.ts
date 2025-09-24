@@ -1,7 +1,7 @@
 import axios from 'axios';
-import { Project, ProjectDetail, ProjectsResponse, ProjectSubmission } from '../types';
+import { Project, ProjectDetail, ProjectsResponse, ProjectSubmission, Contributor } from '../types';
 
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:40256';
+const API_BASE_URL = (import.meta as any).env?.VITE_API_BASE_URL || 'http://localhost:40256';
 
 const api = axios.create({
   baseURL: API_BASE_URL,
@@ -53,6 +53,41 @@ export const projectsApi = {
   refresh: async (id: string): Promise<ProjectDetail> => {
     const response = await api.post(`/projects/${id}/refresh`);
     return response.data;
+  },
+};
+
+export const contributorsApi = {
+  // Get all contributors across all projects
+  list: async (): Promise<Contributor[]> => {
+    const projectsResponse = await projectsApi.list({ limit: 100 });
+    const allContributors: Contributor[] = [];
+    
+    // Get detailed data for each project to access contributors
+    for (const project of projectsResponse.projects) {
+      try {
+        const projectDetail = await projectsApi.get(project.id);
+        if (projectDetail.contributors_90d) {
+          // Add project context to each contributor
+          const contributorsWithProject = projectDetail.contributors_90d.map(contributor => ({
+            ...contributor,
+            project_name: project.name,
+            project_id: project.id,
+            project_url: project.html_url
+          }));
+          allContributors.push(...contributorsWithProject);
+        }
+      } catch (error) {
+        console.warn(`Failed to fetch contributors for project ${project.name}:`, error);
+      }
+    }
+    
+    return allContributors;
+  },
+
+  // Get contributors for a specific project
+  getByProject: async (projectId: string): Promise<Contributor[]> => {
+    const projectDetail = await projectsApi.get(projectId);
+    return projectDetail.contributors_90d || [];
   },
 };
 

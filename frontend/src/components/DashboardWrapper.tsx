@@ -161,10 +161,10 @@ const DashboardWrapper: React.FC = () => {
     >
       <div className="space-y-6">
         {/* Page Header */}
-        <div className="flex items-center justify-between">
+        <div className="flex items-center justify-between animate-fade-in-up">
           <div>
-            <h1 className="text-2xl font-semibold text-text-primary">Repository Analytics</h1>
-            <p className="mt-1 text-text-tertiary">Monitor your GitHub repositories performance and activity</p>
+            <h1 className="text-3xl hero-title animate-slide-down">Repository Analytics</h1>
+            <p className="mt-2 text-text-tertiary animate-fade-in-up animate-stagger-1">Monitor your GitHub repositories performance and activity</p>
           </div>
           <div className="flex items-center space-x-3">
             <div className="relative lg:hidden">
@@ -194,44 +194,52 @@ const DashboardWrapper: React.FC = () => {
 
         {/* Metrics Cards */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-            <MetricCard
-              title="Total Stars"
-              value="2.9k"
-              change="+12.5%"
-              changeType="positive"
-              icon={<Star className="h-6 w-6" />}
-              iconColor="text-accent"
-            />
-            <MetricCard
-              title="Active Repositories"
-              value={activeRepos}
-              change="+2 this month"
-              changeType="positive"
-              icon={<GitBranch className="h-6 w-6" />}
-              iconColor="text-accent"
-            />
-            <MetricCard
-              title="Pull Requests"
-              value="147"
-              change="+18 open"
-              changeType="positive"
-              icon={<GitPullRequest className="h-6 w-6" />}
-              iconColor="text-accent"
-            />
-            <MetricCard
-              title="Contributors"
-              value={totalContributors}
-              change="+7 this quarter"
-              changeType="positive"
-              icon={<Users className="h-6 w-6" />}
-              iconColor="text-accent"
-            />
+            <div className="animate-scale-in animate-stagger-1 hover-lift">
+              <MetricCard
+                title="Total Stars"
+                value="2.9k"
+                change="+12.5%"
+                changeType="positive"
+                icon={<Star className="h-6 w-6" />}
+                iconColor="text-accent"
+              />
+            </div>
+            <div className="animate-scale-in animate-stagger-2 hover-lift">
+              <MetricCard
+                title="Active Repositories"
+                value={activeRepos}
+                change="+2 this month"
+                changeType="positive"
+                icon={<GitBranch className="h-6 w-6" />}
+                iconColor="text-accent"
+              />
+            </div>
+            <div className="animate-scale-in animate-stagger-3 hover-lift">
+              <MetricCard
+                title="Pull Requests"
+                value="147"
+                change="+18 open"
+                changeType="positive"
+                icon={<GitPullRequest className="h-6 w-6" />}
+                iconColor="text-accent"
+              />
+            </div>
+            <div className="animate-scale-in animate-stagger-4 hover-lift">
+              <MetricCard
+                title="Contributors"
+                value={totalContributors}
+                change="+7 this quarter"
+                changeType="positive"
+                icon={<Users className="h-6 w-6" />}
+                iconColor="text-accent"
+              />
+            </div>
         </div>
 
         {/* Charts Section */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
             {/* Commit Activity Chart */}
-            <Card className="luxe-panel">
+            <Card className="luxe-panel animate-fade-in-left hover-lift">
               <CardHeader>
                 <CardTitle className="text-lg font-semibold text-text-primary">Commit Activity</CardTitle>
                 <p className="text-sm text-text-tertiary">Monthly commit trends across all repositories</p>
@@ -242,7 +250,7 @@ const DashboardWrapper: React.FC = () => {
             </Card>
 
             {/* Pull Request Trends Chart */}
-            <Card className="luxe-panel">
+            <Card className="luxe-panel animate-fade-in-right hover-lift">
               <CardHeader>
                 <CardTitle className="text-lg font-semibold text-text-primary">Pull Request Trends</CardTitle>
                 <p className="text-sm text-text-tertiary">Monthly PR activity and review cycles</p>
@@ -254,7 +262,7 @@ const DashboardWrapper: React.FC = () => {
         </div>
 
         {/* Repository Overview Table */}
-        <Card className="luxe-panel">
+        <Card className="luxe-panel animate-fade-in-up hover-lift">
             <CardHeader>
               <CardTitle className="text-lg font-semibold text-text-primary">Repository Overview</CardTitle>
               <p className="text-sm text-text-tertiary">Detailed stats for all your repositories</p>

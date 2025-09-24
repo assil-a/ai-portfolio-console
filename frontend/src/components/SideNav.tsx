@@ -138,26 +138,6 @@ const SideNav: React.FC<SideNavProps> = ({
         </ul>
       </div>
       
-      {/* Bottom Section */}
-      {!collapsed && (
-        <div className="absolute bottom-6 left-3 right-3">
-          <div className="bg-accent-subtle border border-accent-surface rounded-lg p-4">
-            <div className="flex items-center space-x-3">
-              <div className="w-8 h-8 bg-accent rounded-full flex items-center justify-center">
-                <span className="text-accent-fg text-xs font-semibold">AA</span>
-              </div>
-              <div className="flex-1 min-w-0">
-                <p className="text-sm font-medium text-text-primary truncate">
-                  Assil Assas
-                </p>
-                <p className="text-xs text-text-tertiary truncate">
-                  assil@example.com
-                </p>
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
     </nav>
   );
 };
