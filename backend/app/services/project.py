@@ -38,7 +38,12 @@ class ProjectService:
             visibility=repo_data['visibility'],
             last_commit_at=repo_data['last_commit_at'],
             last_actor=repo_data['last_actor'],
-            install_status=repo_data['install_status']
+            install_status=repo_data['install_status'],
+            stargazer_count=repo_data.get('stargazer_count', 0),
+            fork_count=repo_data.get('fork_count', 0),
+            watchers_count=repo_data.get('watchers_count', 0),
+            open_issues_count=repo_data.get('open_issues_count', 0),
+            open_prs_count=repo_data.get('open_prs_count', 0)
         )
         
         db.add(project)
@@ -192,6 +197,11 @@ class ProjectService:
         project.last_commit_at = repo_data['last_commit_at']
         project.last_actor = repo_data['last_actor']
         project.install_status = repo_data['install_status']
+        project.stargazer_count = repo_data.get('stargazer_count', 0)
+        project.fork_count = repo_data.get('fork_count', 0)
+        project.watchers_count = repo_data.get('watchers_count', 0)
+        project.open_issues_count = repo_data.get('open_issues_count', 0)
+        project.open_prs_count = repo_data.get('open_prs_count', 0)
         
         # Update contributors
         await self._update_contributors(db, project.id, repo_data['contributors'])
@@ -227,6 +237,120 @@ class ProjectService:
             .where(ProjectContributor.project_id == project_id)
         )
         return result.scalar() or 0
+
+    async def get_overview_metrics(self, db: AsyncSession) -> Dict[str, Any]:
+        """Get overview metrics for the dashboard."""
+        from datetime import datetime, timedelta, timezone
+        
+        # Calculate date 30 days ago for active repos
+        thirty_days_ago = datetime.now(timezone.utc) - timedelta(days=30)
+        
+        # Get total stars
+        stars_result = await db.execute(
+            select(func.sum(Project.stargazer_count))
+        )
+        total_stars = stars_result.scalar() or 0
+        
+        # Get active repositories (with commits in last 30 days)
+        active_repos_result = await db.execute(
+            select(func.count(Project.id))
+            .where(Project.last_commit_at >= thirty_days_ago)
+        )
+        active_repos = active_repos_result.scalar() or 0
+        
+        # Get total open PRs
+        prs_result = await db.execute(
+            select(func.sum(Project.open_prs_count))
+        )
+        total_prs = prs_result.scalar() or 0
+        
+        # Get total contributors
+        contributors_result = await db.execute(
+            select(func.count(ProjectContributor.id))
+        )
+        total_contributors = contributors_result.scalar() or 0
+        
+        # Get commit activity data (last 6 months)
+        six_months_ago = datetime.now(timezone.utc) - timedelta(days=180)
+        commit_activity = await self._get_commit_activity_data(db, six_months_ago)
+        
+        # Get PR trends data (last 6 months)
+        pr_trends = await self._get_pr_trends_data(db, six_months_ago)
+        
+        return {
+            "total_stars": total_stars,
+            "active_repos": active_repos,
+            "total_prs": total_prs,
+            "total_contributors": total_contributors,
+            "commit_activity": commit_activity,
+            "pr_trends": pr_trends
+        }
+    
+    async def _get_commit_activity_data(self, db: AsyncSession, since_date: datetime) -> List[Dict[str, Any]]:
+        """Get commit activity data for the last 6 months."""
+        # For now, return mock data since we don't store historical commit data
+        # In a production system, you'd want to store daily/monthly commit counts
+        from datetime import datetime
+        import calendar
+        
+        current_date = datetime.now()
+        months = []
+        
+        for i in range(6):
+            month_date = datetime(current_date.year, current_date.month - i, 1)
+            if month_date.month <= 0:
+                month_date = month_date.replace(year=month_date.year - 1, month=month_date.month + 12)
+            
+            month_name = calendar.month_abbr[month_date.month]
+            
+            # Get contributor count for this month as a proxy for activity
+            contributors_result = await db.execute(
+                select(func.count(ProjectContributor.id))
+                .where(ProjectContributor.last_commit_at >= month_date)
+            )
+            activity_count = contributors_result.scalar() or 0
+            
+            months.append({
+                "month": month_name,
+                "value": max(activity_count * 10, 50)  # Scale up for visualization
+            })
+        
+        return list(reversed(months))
+    
+    async def _get_pr_trends_data(self, db: AsyncSession, since_date: datetime) -> List[Dict[str, Any]]:
+        """Get PR trends data for the last 6 months."""
+        # For now, return mock data based on current PR counts
+        # In a production system, you'd want to store historical PR data
+        from datetime import datetime
+        import calendar
+        
+        current_date = datetime.now()
+        months = []
+        
+        # Get current total PRs as baseline
+        prs_result = await db.execute(
+            select(func.sum(Project.open_prs_count))
+        )
+        current_prs = prs_result.scalar() or 0
+        
+        for i in range(6):
+            month_date = datetime(current_date.year, current_date.month - i, 1)
+            if month_date.month <= 0:
+                month_date = month_date.replace(year=month_date.year - 1, month=month_date.month + 12)
+            
+            month_name = calendar.month_abbr[month_date.month]
+            
+            # Generate trend data based on current PRs with some variation
+            import random
+            variation = random.randint(-5, 10)
+            pr_count = max(current_prs + variation, 0)
+            
+            months.append({
+                "month": month_name,
+                "value": pr_count
+            })
+        
+        return list(reversed(months))
 
 
 # Global instance

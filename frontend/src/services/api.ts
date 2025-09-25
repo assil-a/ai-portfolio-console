@@ -1,7 +1,7 @@
 import axios from 'axios';
-import { Project, ProjectDetail, ProjectsResponse, ProjectSubmission, Contributor } from '../types';
+import { Project, ProjectDetail, ProjectsResponse, ProjectSubmission, Contributor, OverviewMetrics } from '../types';
 
-const API_BASE_URL = (import.meta as any).env?.VITE_API_BASE_URL || 'http://localhost:40256';
+const API_BASE_URL = (import.meta as any).env?.VITE_API_BASE_URL || 'http://localhost:40257';
 
 const api = axios.create({
   baseURL: API_BASE_URL,
@@ -88,6 +88,14 @@ export const contributorsApi = {
   getByProject: async (projectId: string): Promise<Contributor[]> => {
     const projectDetail = await projectsApi.get(projectId);
     return projectDetail.contributors_90d || [];
+  },
+};
+
+export const overviewApi = {
+  // Get overview metrics for dashboard
+  getMetrics: async (): Promise<OverviewMetrics> => {
+    const response = await api.get('/projects/overview/metrics');
+    return response.data;
   },
 };
 

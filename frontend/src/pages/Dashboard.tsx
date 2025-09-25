@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Search, Star, GitBranch, GitPullRequest, Users, Filter, MoreHorizontal, Plus } from 'lucide-react';
-import { Project, ProjectsResponse, ProjectDetail as ProjectDetailType } from '../types';
-import { projectsApi } from '../services/api';
+import { Project, ProjectsResponse, ProjectDetail as ProjectDetailType, OverviewMetrics } from '../types';
+import { projectsApi, overviewApi } from '../services/api';
 import ProjectDetail from '../components/ProjectDetail';
 import AddProjectModal from '../components/AddProjectModal';
 import MetricCard from '../components/MetricCard';
@@ -22,6 +22,8 @@ const Dashboard: React.FC = () => {
   const [showAddModal, setShowAddModal] = useState(false);
   const [addingProject, setAddingProject] = useState(false);
   const [refreshingIds, setRefreshingIds] = useState<Set<string>>(new Set());
+  const [overviewMetrics, setOverviewMetrics] = useState<OverviewMetrics | null>(null);
+  const [metricsLoading, setMetricsLoading] = useState(true);
   
   // Filters and pagination
   const [search, setSearch] = useState('');
@@ -29,25 +31,6 @@ const Dashboard: React.FC = () => {
   const [currentPage, setCurrentPage] = useState(0);
   const [totalProjects, setTotalProjects] = useState(0);
   const pageSize = 20;
-
-  // Mock data for charts and metrics
-  const commitActivityData = [
-    { month: 'Jan', value: 120 },
-    { month: 'Feb', value: 150 },
-    { month: 'Mar', value: 140 },
-    { month: 'Apr', value: 180 },
-    { month: 'May', value: 170 },
-    { month: 'Jun', value: 200 }
-  ];
-
-  const pullRequestTrendsData = [
-    { month: 'Jan', value: 18 },
-    { month: 'Feb', value: 22 },
-    { month: 'Mar', value: 20 },
-    { month: 'Apr', value: 16 },
-    { month: 'May', value: 28 },
-    { month: 'Jun', value: 32 }
-  ];
 
   const loadProjects = async (page = 0, searchTerm = search, order = sortOrder) => {
     try {
@@ -72,8 +55,24 @@ const Dashboard: React.FC = () => {
     }
   };
 
+  const loadOverviewMetrics = async () => {
+    try {
+      setMetricsLoading(true);
+      console.log('🔍 Loading overview metrics...');
+      const metrics = await overviewApi.getMetrics();
+      console.log('✅ Overview metrics loaded:', metrics);
+      setOverviewMetrics(metrics);
+    } catch (err: any) {
+      console.error('❌ Error loading overview metrics:', err);
+      // Don't set error state for metrics, just log it
+    } finally {
+      setMetricsLoading(false);
+    }
+  };
+
   useEffect(() => {
     loadProjects();
+    loadOverviewMetrics();
   }, []);
 
   const handleSearch = (e: React.FormEvent) => {
@@ -190,7 +189,7 @@ const Dashboard: React.FC = () => {
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
           <MetricCard
             title="Total Stars"
-            value="2.9k"
+            value={metricsLoading ? "..." : (overviewMetrics?.total_stars?.toLocaleString() || "0")}
             change="+12.5%"
             changeType="positive"
             icon={<Star className="h-6 w-6" />}
@@ -198,7 +197,7 @@ const Dashboard: React.FC = () => {
           />
           <MetricCard
             title="Active Repositories"
-            value={activeRepos}
+            value={metricsLoading ? "..." : (overviewMetrics?.active_repos || activeRepos)}
             change="+2 this month"
             changeType="positive"
             icon={<GitBranch className="h-6 w-6" />}
@@ -206,7 +205,7 @@ const Dashboard: React.FC = () => {
           />
           <MetricCard
             title="Pull Requests"
-            value="147"
+            value={metricsLoading ? "..." : (overviewMetrics?.total_prs || "0")}
             change="+18 open"
             changeType="positive"
             icon={<GitPullRequest className="h-6 w-6" />}
@@ -214,7 +213,7 @@ const Dashboard: React.FC = () => {
           />
           <MetricCard
             title="Contributors"
-            value={totalContributors}
+            value={metricsLoading ? "..." : (overviewMetrics?.total_contributors || totalContributors)}
             change="+7 this quarter"
             changeType="positive"
             icon={<Users className="h-6 w-6" />}
@@ -231,7 +230,11 @@ const Dashboard: React.FC = () => {
               <p className="text-sm text-text-tertiary">Monthly commit trends across all repositories</p>
             </CardHeader>
             <CardContent>
-              <AreaChart data={commitActivityData} height={250} color="#10b981" />
+              <AreaChart 
+                data={overviewMetrics?.commit_activity || []} 
+                height={250} 
+                color="#10b981" 
+              />
             </CardContent>
           </Card>
 
@@ -242,7 +245,11 @@ const Dashboard: React.FC = () => {
               <p className="text-sm text-text-tertiary">Monthly PR activity and review cycles</p>
             </CardHeader>
             <CardContent>
-              <LineChart data={pullRequestTrendsData} height={250} color="#10b981" />
+              <LineChart 
+                data={overviewMetrics?.pr_trends || []} 
+                height={250} 
+                color="#10b981" 
+              />
             </CardContent>
           </Card>
       </div>
@@ -286,16 +293,16 @@ const Dashboard: React.FC = () => {
                           <span className="text-text-secondary">{getLanguageFromName(project.name)}</span>
                         </td>
                         <td className="py-3 px-4 text-text-primary">
-                          {Math.floor(Math.random() * 1000) + 100}
+                          {project.stargazer_count || 0}
                         </td>
                         <td className="py-3 px-4 text-text-primary">
-                          {Math.floor(Math.random() * 200) + 20}
+                          {project.fork_count || 0}
                         </td>
                         <td className="py-3 px-4 text-text-primary">
-                          {Math.floor(Math.random() * 100) + 10}
+                          {project.watchers_count || 0}
                         </td>
                         <td className="py-3 px-4 text-text-primary">
-                          {Math.floor(Math.random() * 20)}
+                          {project.open_issues_count || 0}
                         </td>
                         <td className="py-3 px-4">
                           {getStatusBadge(project)}

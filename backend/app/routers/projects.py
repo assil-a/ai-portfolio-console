@@ -20,6 +20,28 @@ logger = structlog.get_logger()
 router = APIRouter(prefix="/projects", tags=["projects"])
 
 
+@router.get("/overview/metrics")
+async def get_overview_metrics(
+    db: AsyncSession = Depends(get_db)
+):
+    """
+    Get overview metrics for the dashboard.
+    
+    Returns:
+    - Total stars across all repositories
+    - Number of active repositories (with commits in last 30 days)
+    - Total open pull requests
+    - Total contributors across all projects
+    """
+    try:
+        metrics = await project_service.get_overview_metrics(db)
+        return metrics
+    
+    except Exception as e:
+        logger.error(f"Error getting overview metrics: {e}")
+        raise HTTPException(status_code=500, detail="Internal server error")
+
+
 @router.post("/", response_model=ProjectDetailResponse)
 async def create_project(
     submission: ProjectSubmission,

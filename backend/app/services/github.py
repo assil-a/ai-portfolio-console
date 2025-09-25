@@ -156,6 +156,14 @@ class GitHubService:
             nameWithOwner
             isPrivate
             url
+            stargazerCount
+            forkCount
+            watchers {
+              totalCount
+            }
+            issues(states: OPEN) {
+              totalCount
+            }
             defaultBranchRef {
               name
               target {
@@ -189,6 +197,7 @@ class GitHubService:
               }
             }
             pullRequests(states: OPEN, first: 1, orderBy: {field: UPDATED_AT, direction: DESC}) {
+              totalCount
               nodes {
                 number
                 updatedAt
@@ -330,7 +339,12 @@ class GitHubService:
             'last_commit_at': None,
             'last_actor': None,
             'default_branch': None,
-            'last_open_pr': None
+            'last_open_pr': None,
+            'stargazer_count': repo_data.get('stargazerCount', 0),
+            'fork_count': repo_data.get('forkCount', 0),
+            'watchers_count': repo_data.get('watchers', {}).get('totalCount', 0),
+            'open_issues_count': repo_data.get('issues', {}).get('totalCount', 0),
+            'open_prs_count': repo_data.get('pullRequests', {}).get('totalCount', 0)
         }
         
         # Process default branch and commits

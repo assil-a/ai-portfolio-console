@@ -8,6 +8,11 @@ export interface Project {
   last_commit_at?: string;
   last_actor?: string;
   active_contributors_90d: number;
+  stargazer_count?: number;
+  fork_count?: number;
+  watchers_count?: number;
+  open_issues_count?: number;
+  open_prs_count?: number;
   created_at: string;
   updated_at: string;
 }
@@ -44,4 +49,18 @@ export interface ApiError {
   error: string;
   message: string;
   details?: Record<string, any>;
+}
+
+export interface ChartDataPoint {
+  month: string;
+  value: number;
+}
+
+export interface OverviewMetrics {
+  total_stars: number;
+  active_repos: number;
+  total_prs: number;
+  total_contributors: number;
+  commit_activity: ChartDataPoint[];
+  pr_trends: ChartDataPoint[];
 }

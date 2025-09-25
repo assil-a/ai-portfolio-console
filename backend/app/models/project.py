@@ -27,6 +27,14 @@ class Project(Base):
     last_commit_at = Column(DateTime(timezone=True))
     last_actor = Column(String)
     install_status = Column(String, default='none')  # 'app', 'oauth', 'none'
+    
+    # GitHub metrics
+    stargazer_count = Column(Integer, default=0)
+    fork_count = Column(Integer, default=0)
+    watchers_count = Column(Integer, default=0)
+    open_issues_count = Column(Integer, default=0)
+    open_prs_count = Column(Integer, default=0)
+    
     created_at = Column(DateTime(timezone=True), server_default=func.now())
     updated_at = Column(DateTime(timezone=True), server_default=func.now(), onupdate=func.now())
 
