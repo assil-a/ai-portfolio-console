@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Search, Star, GitBranch, GitPullRequest, Users, Filter, MoreHorizontal, Plus } from 'lucide-react';
+import { Search, Star, GitBranch, GitPullRequest, Users, Filter } from 'lucide-react';
 import { Project, ProjectsResponse, ProjectDetail as ProjectDetailType, OverviewMetrics } from '../types';
 import { projectsApi, overviewApi } from '../services/api';
 import ProjectDetail from './ProjectDetail';
@@ -7,7 +7,6 @@ import AddProjectModal from './AddProjectModal';
 import MetricCard from './MetricCard';
 import AreaChart from './charts/AreaChart';
 import LineChart from './charts/LineChart';
-import { ThemeToggle } from './theme-toggle';
 import { Button } from './ui/button';
 import { Input } from './ui/input';
 import { Alert, AlertDescription } from './ui/alert';
@@ -28,7 +27,7 @@ const DashboardWrapper: React.FC = () => {
   
   // Filters and pagination
   const [search, setSearch] = useState('');
-  const [sortOrder, setSortOrder] = useState('last_activity_at_desc');
+  const [sortOrder] = useState('last_activity_at_desc');
   const [currentPage, setCurrentPage] = useState(0);
   const [totalProjects, setTotalProjects] = useState(0);
   const pageSize = 20;
@@ -126,10 +125,10 @@ const DashboardWrapper: React.FC = () => {
   };
 
   // Calculate metrics from projects data
-  const totalStars = projects.reduce((sum, project) => sum + (project.active_contributors_90d || 0), 0);
+  const totalStars = projects.reduce((sum, project) => sum + (project.stargazer_count || 0), 0);
   const activeRepos = projects.filter(p => p.last_commit_at && 
     new Date(p.last_commit_at) > new Date(Date.now() - 30 * 24 * 60 * 60 * 1000)).length;
-  const totalContributors = projects.reduce((sum, project) => sum + project.active_contributors_90d, 0);
+  const totalContributors = projects.reduce((sum, project) => sum + (project.active_contributors_90d || 0), 0);
 
   const getLanguageFromName = (name: string): string => {
     // Simple heuristic based on common patterns

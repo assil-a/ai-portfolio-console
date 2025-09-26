@@ -264,9 +264,9 @@ class ProjectService:
         )
         total_prs = prs_result.scalar() or 0
         
-        # Get total contributors
+        # Get total unique contributors (distinct by login across all projects)
         contributors_result = await db.execute(
-            select(func.count(ProjectContributor.id))
+            select(func.count(func.distinct(ProjectContributor.login)))
         )
         total_contributors = contributors_result.scalar() or 0
         
@@ -319,7 +319,7 @@ class ProjectService:
     
     async def _get_pr_trends_data(self, db: AsyncSession, since_date: datetime) -> List[Dict[str, Any]]:
         """Get PR trends data for the last 6 months."""
-        # For now, return mock data based on current PR counts
+        # Since we don't have historical PR data, use current PR count consistently
         # In a production system, you'd want to store historical PR data
         from datetime import datetime
         import calendar
@@ -340,14 +340,12 @@ class ProjectService:
             
             month_name = calendar.month_abbr[month_date.month]
             
-            # Generate trend data based on current PRs with some variation
-            import random
-            variation = random.randint(-5, 10)
-            pr_count = max(current_prs + variation, 0)
-            
+            # Use real current PR count (no random variations)
+            # This shows the actual current state across all months
+            # TODO: In production, store historical PR counts for real trends
             months.append({
                 "month": month_name,
-                "value": pr_count
+                "value": current_prs
             })
         
         return list(reversed(months))
